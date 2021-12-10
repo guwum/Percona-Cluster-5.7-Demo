@@ -1,0 +1,65 @@
+- name: Upload mysql config to all nodes
+  template:
+    src: my.j2
+    dest: /root/.my.cnf
+    
+- name: Create replication user on primary master
+  mysql_user:
+    name: sstuser
+    password: "{{ pxcsstpassword }}"
+    priv: "*.*:REPLICATION CLIENT,PROCESS,RELOAD,LOCK TABLES"
+    host: localhost
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    login_password: "{{ pxcrootpasswd }}"
+  when: inventory_hostname == groups['pxcmm'][0]
+  
+# Кроме создания пользователя, вы можете создать БД и залить дамп на этот сервер прежде чем собрать кластер.
+# Это быстрее, чем заливать дамп на уже собранный кластер.
+
+- name: Ensure that mysql alredy stopped
+  systemd:
+    state: stopped
+    name: mysql
+
+- name: Upload mysqld config to all nodes
+  template:
+    src: mysqld.j2
+    dest: /etc/mysql/percona-xtradb-cluster.conf.d/mysqld.cnf
+
+- name: Upload wsrep config to first node
+  template:
+    src: bootstrap.j2
+    dest: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+  when: inventory_hostname == groups['pxcmm'][0]
+
+- name: Bootstrap first node
+  shell: /etc/init.d/mysql bootstrap-pxc
+  when: inventory_hostname == groups['pxcmm'][0]
+
+- name: Upload consolidated wsrep config to all nodes
+  template:
+    src: wsrep.j2
+    dest: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+
+- name: Fix wsrep file
+  shell: sed -i '$ s/.$//' /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+
+- name: Bootstrap second node
+  systemd:
+    state: started
+    name: mysql
+  when: inventory_hostname == groups['pxcmm'][1]
+
+- name: Bootstrap third node
+  systemd:
+    state: started
+    name: mysql
+  when: inventory_hostname == groups['pxcmm'][2]
+
+- name: Start first node on normal mode
+  systemd:
+    state: restarted
+    name: mysql
+  when: inventory_hostname == groups['pxcmm'][0]

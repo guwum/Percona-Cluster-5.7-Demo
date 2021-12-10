@@ -1,0 +1,10 @@
+---
+# tasks file for 01-deploy-software
+- name: Run "apt-get update"
+  apt:
+    update_cache: yes
+- name: Install utilites
+  apt:
+    pkg: cloud-guest-utils
+- import_tasks: DeployPXC57.yml
+  when: inventory_hostname in groups["pxcmm"]

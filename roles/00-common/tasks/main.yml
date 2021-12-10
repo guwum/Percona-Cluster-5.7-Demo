@@ -1,0 +1,12 @@
+---
+# tasks file for 00-common
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+- name: Deploy /etc/hosts
+  template:
+    src: hosts
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"

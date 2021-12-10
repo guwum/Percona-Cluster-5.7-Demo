@@ -1,0 +1,77 @@
+[mysqld]
+server-id=1
+datadir=/var/lib/mysql
+socket=/var/run/mysqld/mysqld.sock
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+log-bin
+log_slave_updates
+expire_logs_days=1
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+slow_query_log_file=/var/log/mysql/mysql-slow.log
+long_query_time=2
+slow_query_log=OFF
+log_slow_admin_statements=ON
+log_queries_not_using_indexes=OFF
+log_throttle_queries_not_using_indexes=1
+
+### INNODB OPTIONS
+innodb_buffer_pool_size="{{ innodb_buffer_pool_size|default('256M') }}"
+innodb_flush_log_at_trx_commit=2
+innodb_file_per_table=1
+innodb_file_format = barracuda
+
+# NOT WORKING, cannot understand why...
+#innodb_data_file_path=ibdata1:100M:autoextend
+innodb_read_io_threads=8
+innodb_write_io_threads=8
+innodb_doublewrite=1
+innodb_log_file_size=1024M
+innodb_log_buffer_size=64M
+innodb_buffer_pool_instances=8
+innodb_log_files_in_group=2
+innodb_thread_concurrency="{{ innodb_thread_concurrency|default('0') }}"
+innodb_flush_method = O_DIRECT
+# innodb_locks_unsafe_for_binlog = 1
+innodb_autoinc_lock_mode=2
+## avoid statistics update when doing e.g show tables
+innodb_stats_on_metadata=0
+default_storage_engine=innodb
+
+# CHARACTER SET
+collation_server = utf8_unicode_ci
+init_connect = 'SET NAMES utf8'
+character_set_server = utf8
+
+# REPLICATION SPECIFIC
+binlog_format=ROW
+log_bin=binlog
+gtid_mode=ON
+enforce_gtid_consistency=ON
+relay_log=relay-bin
+
+# OTHER THINGS, BUFFERS ETC
+tmp_table_size = 64M
+max_heap_table_size = 64M
+max_allowed_packet = 512M
+sort_buffer_size = 256K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+
+memlock=0
+sysdate_is_now=1
+max_connections=500
+thread_cache_size=512
+# query_cache_type = 0
+# query_cache_size = 0
+query_cache_size                = 128M
+query_cache_type                = 1
+query_cache_min_res_unit        = 2K
+table_open_cache=1024
+lower_case_table_names=0
+# 5.6 backwards compatibility (FIXME)
+# explicit_defaults_for_timestamp = 1 

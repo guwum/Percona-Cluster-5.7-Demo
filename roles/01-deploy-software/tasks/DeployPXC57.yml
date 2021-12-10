@@ -1,0 +1,56 @@
+- name: Install pre-requrements
+  apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - software-properties-common
+    - gnupg-agent
+    - iptables
+    - python3-pymysql
+
+- name: Remove requiremend packages
+  apt:
+    name: apparmor
+    state: absent
+
+- name: Download percona-release deb package
+  get_url:
+    url: https://repo.percona.com/apt/percona-release_latest.generic_all.deb
+    dest: /root/percona-release.deb
+    mode: '0755'
+
+- name: Install percona-release deb package
+  apt: deb="/root/percona-release.deb"
+
+- name: Setup Percona Server Repository
+  shell: percona-release disable all; percona-release enable pxc-57; percona-release setup pxc-57
+
+- name: Pre-configure root mysql passphrase
+  debconf:
+    name: percona-xtradb-cluster-57
+    question: percona-xtradb-cluster-full-57/root-pass
+    value: "{{ pxcrootpasswd }}"
+    vtype: password
+  no_log: True
+
+- name: Pre-configure root mysql passphrase (retupe)
+  debconf:
+    name: percona-xtradb-cluster-57
+    question: percona-xtradb-cluster-full-57/re-root-pass
+    value: "{{ pxcrootpasswd }}"
+    vtype: password
+  no_log: True
+
+- name: Install Percona-Server
+  apt:
+    update_cache: yes
+    pkg:
+    - percona-xtradb-cluster-full-57
+  register: installed
+
+- name: Create several useful UDF (User Defined Function) from Percona Toolkit
+  shell: |
+    mysql -e "CREATE FUNCTION fnv1a_64 RETURNS INTEGER SONAME 'libfnv1a_udf.so'" -p"{{ pxcrootpasswd }}"
+    mysql -e "CREATE FUNCTION fnv_64 RETURNS INTEGER SONAME 'libfnv_udf.so'" -p"{{ pxcrootpasswd }}"
+    mysql -e "CREATE FUNCTION murmur_hash RETURNS INTEGER SONAME 'libmurmur_udf.so'" -p"{{ pxcrootpasswd }}"
+  when: installed.changed

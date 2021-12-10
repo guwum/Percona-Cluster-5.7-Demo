@@ -1,0 +1,5 @@
+- hosts: all
+  roles:
+    - { role: 00-common, when: "ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'", tags: 'prepare' }
+    - { role: 01-deploy-software, when: "ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'", tags: 'install' }
+    - { role: 02-configure-software, when: "ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'", tags: 'configure' }

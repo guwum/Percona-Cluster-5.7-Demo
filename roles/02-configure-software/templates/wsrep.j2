@@ -1,0 +1,25 @@
+[mysqld]
+wsrep_provider=/usr/lib/galera3/libgalera_smm.so
+
+binlog_format=ROW
+
+default_storage_engine=InnoDB
+
+wsrep_slave_threads= 8
+
+wsrep_log_conflicts
+
+innodb_autoinc_lock_mode=2
+
+wsrep_node_address={{ ansible_host }}
+wsrep_cluster_name=pxc-cluster
+
+wsrep_node_name={{ ansible_hostname }}
+
+pxc_strict_mode=PERMISSIVE
+
+wsrep_sst_method=xtrabackup-v2
+
+wsrep_sst_auth=sstuser:{{pxcsstpassword}}
+
+wsrep_cluster_address=gcomm://{% for host in groups['pxcmm'] %}{{ hostvars[host]['ansible_host'] }},{% endfor %}

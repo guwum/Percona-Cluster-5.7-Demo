@@ -1,0 +1,7 @@
+127.0.1.1 {{ inventory_hostname }}
+127.0.0.1 localhost.localdomain localhost
+127.0.0.1 localhost4.localdomain4 localhost4
+
+{% for host in groups['pxcmm'] %}
+{{ hostvars[host]['ansible_host'] }} {{ hostvars[host]['inventory_hostname'] }}
+{% endfor %}

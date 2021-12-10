@@ -1,0 +1,4 @@
+---
+# tasks file for 02-configure-software
+- import_tasks: ConfigurePXCmultimaster.yml
+  when: inventory_hostname in groups["pxcmm"]

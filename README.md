@@ -1,7 +1,7 @@
 # Создание Percona XtraDB Cluster 5.7 при помощи ansible
-Работает только на Debian и Ubuntu!
+Роль работает только на Debian и Ubuntu! Актуальный список поддерживаемых версий ОС уточняйте в [Percona lifecycle](https://www.percona.com/services/policies/percona-software-support-lifecycle#mysql)
 
-## Подготовка к использованию (Debian Buster или Bullseye):
+## Подготовка к использованию роли (в Debian или Ubuntu):
 
 - Устанавливаем git, pip и virtualenv:
 
@@ -38,10 +38,12 @@ pip3 install ansible==2.9.27
 ## Использование:
 
 ```bash
-cd ~/ && git clone https://sources.rpulse.cf/open-source/percona-cluster-5.7-demo.git && cd percona-cluster-5.7-demo/
+cd ~/ && git clone https://sources.rpulse.tk/open-source/percona-cluster-5.7-demo.git && cd percona-cluster-5.7-demo/
 ```
 
-- Правьте inventory на ваше усмотрение;
+- Правьте inventory на ваше усмотрение. Обратите внимание, что для мультимастер кластера, который инициализируется данной ролью, требует кворум:
+
+Минимум - три узла, требуется запускать кластер с нечётным количеством узлов;
 
 - Используйте:
 

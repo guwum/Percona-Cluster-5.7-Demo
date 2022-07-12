@@ -18,6 +18,13 @@
 # Кроме создания пользователя, вы можете создать БД и залить дамп на этот сервер прежде чем собрать кластер.
 # Это быстрее, чем заливать дамп на уже собранный кластер.
 
+- name: Check that we have count of nodes for bootstrap our cluster
+  set_fact:
+    QuorumObserved: "{{ ansible_play_hosts | length }}"
+  failed_when:
+    - "QuorumObserved | int is divisibleby(2)"
+    - "QuorumObserved < 1"
+
 - name: Ensure that mysql alredy stopped
   systemd:
     state: stopped
@@ -46,17 +53,11 @@
 - name: Fix wsrep file
   shell: sed -i '$ s/.$//' /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
 
-- name: Bootstrap second node
+- name: Bootstrap other nodes
   systemd:
     state: started
     name: mysql
-  when: inventory_hostname == groups['pxcmm'][1]
-
-- name: Bootstrap third node
-  systemd:
-    state: started
-    name: mysql
-  when: inventory_hostname == groups['pxcmm'][2]
+  when: inventory_hostname != groups['pxcmm'][0]
 
 - name: Start first node on normal mode
   systemd:

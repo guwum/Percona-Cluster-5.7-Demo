@@ -1,0 +1,6 @@
+# must be placed in ansible-vault encrypted file, but vault file is not present
+# because it publicly worked example
+pxcrootpasswd: "RootPassword"
+pxcsstpassword: "SstPassword"
+
+innodb_thread_concurrency: "64"

@@ -38,15 +38,15 @@ pip3 install ansible==2.9.27
 ## Использование:
 
 ```bash
-cd ~/ && git clone https://sources.rpulse.tk/open-source/percona-cluster-5.7-demo.git && cd percona-cluster-5.7-demo/
+cd ~/ && git clone https://sources.rpulse.tk/open-source/percona-cluster-5.7-demo.git && cd percona-cluster-5.7-demo/ansible
 ```
 
-- Правьте inventory на ваше усмотрение. Обратите внимание, что для мультимастер кластера, который инициализируется данной ролью, требует кворум:
+- Правьте файл inventory (inventories/pxcmm/inventory.ini) на ваше усмотрение. Обратите внимание, что для мультимастер кластера, который инициализируется данной ролью, требует кворум:
 
 Минимум - три узла, требуется запускать кластер с нечётным количеством узлов;
 
 - Используйте:
 
 ```bash
-ansible-playbook -i inventory.ini all.yml
+ansible-playbook -i inventories/pxcmm/inventory.ini all.yml
 ```

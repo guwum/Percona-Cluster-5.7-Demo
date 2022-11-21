@@ -1,0 +1,3 @@
+---
+# defaults file for 02-configure-software
+innodb_thread_concurrency: "64"

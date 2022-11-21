@@ -1,5 +1,0 @@
----
-# vars file for 02-configure-software
-pxcrootpasswd: "RootPassword"
-pxcsstpassword: "SstPassword"
-innodb_thread_concurrency: "64"

@@ -7,6 +7,6 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://root@192.168.11.1/system?keyfile=/home/guwum/.ssh/nt&sshauth=privkey"
+  uri = "qemu+ssh://root@192.168.11.1/system?keyfile=/home/stagging/.ssh/dev&sshauth=privkey"
 #  uri = "qemu+ssh://root@192.168.11.1/system"
 }
